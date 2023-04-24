@@ -43,3 +43,17 @@ func TestToJSON(t *testing.T) {
 		})
 	})
 }
+
+func ExampleToJSON() {
+	fruits := []string{"apple", "banana", "pineapple"}
+	script.Slice(fruits).Filter(scriptx.ToJSON(func(fruit string) any {
+		return map[string]any{
+			"fruit":  fruit,
+			"length": len(fruit),
+		}
+	})).Stdout()
+	// Output:
+	// {"fruit":"apple","length":5}
+	// {"fruit":"banana","length":6}
+	// {"fruit":"pineapple","length":9}
+}

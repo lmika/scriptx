@@ -29,3 +29,16 @@ func TestCSVColumn(t *testing.T) {
 		})
 	})
 }
+
+func ExampleCSVColumn() {
+	script.Slice([]string{
+		"letter,fruit,word",
+		"a,apple,alpha",
+		"b,banana,bravo",
+		"c,cherry,charlie",
+	}).Filter(scriptx.CSVColumn("fruit")).Stdout()
+	// Output:
+	// apple
+	// banana
+	// cherry
+}
