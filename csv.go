@@ -9,6 +9,7 @@ import (
 func CSVColumn(name string) func(r io.Reader, w io.Writer) error {
 	return func(r io.Reader, w io.Writer) error {
 		cr := csv.NewReader(r)
+		cr.FieldsPerRecord = -1
 
 		header, err := cr.Read()
 		if err != nil {
@@ -34,7 +35,7 @@ func CSVColumn(name string) func(r io.Reader, w io.Writer) error {
 					return err
 				}
 			}
-			if len(rec) < colIdx {
+			if len(rec) <= colIdx {
 				continue
 			}
 
