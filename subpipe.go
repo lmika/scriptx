@@ -2,8 +2,9 @@ package scriptx
 
 import (
 	"bufio"
-	"github.com/bitfield/script"
 	"io"
+
+	"github.com/bitfield/script"
 )
 
 func eachLine(r io.Reader, fn func(line string) error) error {
@@ -16,11 +17,11 @@ func eachLine(r io.Reader, fn func(line string) error) error {
 	return scanner.Err()
 }
 
-func SubPipe(fn func(src string) *script.Pipe) func(r io.Reader, w io.Writer) error {
+func SubPipe(fn func(src *script.Pipe) *script.Pipe) func(r io.Reader, w io.Writer) error {
 	return func(r io.Reader, w io.Writer) error {
 		scanner := bufio.NewScanner(r)
 		for scanner.Scan() {
-			bts, err := fn(scanner.Text()).Bytes()
+			bts, err := fn(script.Echo(scanner.Text())).Bytes()
 			if err != nil {
 				return err
 			}
