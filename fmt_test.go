@@ -31,10 +31,3 @@ func verifyPipeLines(t *testing.T, fn func(p *script.Pipe) *script.Pipe, inLines
 	assert.NoError(t, err)
 	assert.Equal(t, expOut, outLines)
 }
-
-func verifyPipeErr(t *testing.T, fn func(p *script.Pipe) *script.Pipe, inLines []string) {
-	pipe := script.Slice(inLines)
-	_, err := fn(pipe).Slice()
-
-	assert.Error(t, err)
-}
