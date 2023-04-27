@@ -10,8 +10,8 @@ import (
 func TestSubPipe(t *testing.T) {
 	t.Run("should run the subpipe for each line in the parent pipe", func(t *testing.T) {
 		verifyPipeLines(t, func(p *script.Pipe) *script.Pipe {
-			return p.Filter(scriptx.SubPipe(func (src *script.Pipe) *script.Pipe {
-				return src.Replace("Line", "Subpipe")
+			return p.Filter(scriptx.SubPipe(func (line string) *script.Pipe {
+				return script.Echo(line).Replace("Line", "Subpipe")
 			}))
 		}, []string{
 			"Line 1",
