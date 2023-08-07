@@ -7,7 +7,7 @@ import (
 
 func Printf(ptrn string) func(r io.Reader, w io.Writer) error {
 	return func(r io.Reader, w io.Writer) error {
-		return eachLine(r, func(line string) error {
+		return eachLine(r, func(_ int, line string) error {
 			_, err := io.WriteString(w, fmt.Sprintf(ptrn, line))
 			if err != nil {
 				return err

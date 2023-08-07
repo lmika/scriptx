@@ -10,7 +10,7 @@ import (
 // The passed in function is to return a Go value that can be marshalled to JSON value.
 func ToJSON(fn func(line string) any) func(r io.Reader, w io.Writer) error {
 	return func(r io.Reader, w io.Writer) error {
-		return eachLine(r, func(line string) (err error) {
+		return eachLine(r, func(_ int, line string) (err error) {
 			jsonBytes, err := json.Marshal(fn(line))
 			if err != nil {
 				return err

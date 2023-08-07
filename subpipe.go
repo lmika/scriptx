@@ -7,12 +7,14 @@ import (
 	"github.com/bitfield/script"
 )
 
-func eachLine(r io.Reader, fn func(line string) error) error {
+func eachLine(r io.Reader, fn func(n int, line string) error) error {
 	scanner := bufio.NewScanner(r)
+	n := 1
 	for scanner.Scan() {
-		if err := fn(scanner.Text()); err != nil {
+		if err := fn(n, scanner.Text()); err != nil {
 			return err
 		}
+		n++
 	}
 	return scanner.Err()
 }
