@@ -4,33 +4,27 @@ import (
 	"io"
 )
 
-// FirstLinesBetween is a filter function that will emit all lines starting from the first that matches
-// from (inclusive) up until the first that matches to (exclusive). Only the first set of lines matching
-// the two matchers will be emitted.
-func FirstLinesBetween(from LineMatcher, to LineMatcher) func(r io.Reader, w io.Writer) error {
-	const (
-		stateWaitingForFrom int = iota
-		stateWaitingForTo
-		stateDone
-	)
-
+// LinesBetween is a filter function that will emit all lines starting from the first that matches
+// from (inclusive) up until the first that matches to (exclusive).
+func LinesBetween(from LineMatcher, to LineMatcher) func(r io.Reader, w io.Writer) error {
 	return func(r io.Reader, w io.Writer) error {
 		var (
-			nextMatcher = from
-			state       = stateWaitingForFrom
+			matcher      = from
+			waitingForTo = false
 		)
 
 		return eachLine(r, func(n int, line string) error {
-			if state >= stateDone {
-				return nil
+			if matcher.Match(n, line) {
+				waitingForTo = !waitingForTo
+
+				if waitingForTo {
+					matcher = to
+				} else {
+					matcher = from
+				}
 			}
 
-			if nextMatcher.Match(n, line) {
-				state++
-				nextMatcher = to
-			}
-
-			if state != stateWaitingForTo {
+			if !waitingForTo {
 				return nil
 			}
 

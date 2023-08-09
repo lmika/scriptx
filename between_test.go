@@ -8,10 +8,10 @@ import (
 	"github.com/lmika/scriptx/linematchers"
 )
 
-func TestFirstLinesBetween(t *testing.T) {
+func TestLinesBetween(t *testing.T) {
 	t.Run("should return all lines from 'from' inclusive to 'to' exclusive", func(t *testing.T) {
 		verifyPipeLines(t, func(p *script.Pipe) *script.Pipe {
-			return p.Filter(scriptx.FirstLinesBetween(
+			return p.Filter(scriptx.LinesBetween(
 				linematchers.Equals("snow"),
 				linematchers.Equals("cloud"),
 			))
@@ -30,9 +30,9 @@ func TestFirstLinesBetween(t *testing.T) {
 		})
 	})
 
-	t.Run("should only return first set of lines matching 'from' and to", func(t *testing.T) {
+	t.Run("should return multiple set of lines matching 'from' and to", func(t *testing.T) {
 		verifyPipeLines(t, func(p *script.Pipe) *script.Pipe {
-			return p.Filter(scriptx.FirstLinesBetween(
+			return p.Filter(scriptx.LinesBetween(
 				linematchers.Equals("sun"),
 				linematchers.Equals("snow"),
 			))
@@ -46,12 +46,14 @@ func TestFirstLinesBetween(t *testing.T) {
 		}, []string{
 			"sun",
 			"rain",
+			"sun",
+			"frost",
 		})
 	})
 
 	t.Run("should return all lines until EOF if no 'to' matches", func(t *testing.T) {
 		verifyPipeLines(t, func(p *script.Pipe) *script.Pipe {
-			return p.Filter(scriptx.FirstLinesBetween(
+			return p.Filter(scriptx.LinesBetween(
 				linematchers.Equals("wind"),
 				linematchers.Equals("meatballs"),
 			))
@@ -73,7 +75,7 @@ func TestFirstLinesBetween(t *testing.T) {
 
 	t.Run("should emit nothing if 'from' is not matched", func(t *testing.T) {
 		verifyPipeLines(t, func(p *script.Pipe) *script.Pipe {
-			return p.Filter(scriptx.FirstLinesBetween(
+			return p.Filter(scriptx.LinesBetween(
 				linematchers.Equals("meatballs"),
 				linematchers.Equals("wind"),
 			))
@@ -89,11 +91,11 @@ func TestFirstLinesBetween(t *testing.T) {
 	})
 }
 
-func ExampleFirstLinesBetween() {
+func ExampleLinesBetween() {
 	weather := []string{"sun", "rain", "snow", "wind", "cloud"}
 
 	script.Slice(weather).
-		Filter(scriptx.FirstLinesBetween(
+		Filter(scriptx.LinesBetween(
 			linematchers.Equals("rain"),
 			linematchers.Equals("cloud"),
 		)).
