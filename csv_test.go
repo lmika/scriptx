@@ -57,3 +57,26 @@ func ExampleToCSV() {
 	// b,banana,bravo
 	// c,cherry,charlie
 }
+
+func ExampleCSVMapToJSON() {
+	script.Slice([]string{
+		"letter,fruit,word",
+		"a,apple,alpha",
+		"b,banana,bravo",
+		"c,cherry,charlie",
+	}).Filter(scriptx.CSVMapToJSON(func(row []string, header *scriptx.CSVHeader) any {
+		return struct {
+			Letter string `json:"letter"`
+			Fruit  string `json:"fruit"`
+			Word   string `json:"word"`
+		}{
+			Letter: header.Value(row, "letter"),
+			Fruit:  header.Value(row, "fruit"),
+			Word:   header.Value(row, "word"),
+		}
+	})).Stdout()
+	// Output:
+	// {"letter":"a","fruit":"apple","word":"alpha"}
+	// {"letter":"b","fruit":"banana","word":"bravo"}
+	// {"letter":"c","fruit":"cherry","word":"charlie"}
+}
