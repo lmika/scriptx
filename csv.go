@@ -1,10 +1,37 @@
 package scriptx
 
 import (
+	"bufio"
 	"encoding/csv"
 	"errors"
 	"io"
 )
+
+type Splitter interface {
+	Split(line string, n int) []string
+}
+
+// ToCSV is a filter function that reads the source as a series of lines, splits them
+// into tokens using the passed in Splitter, and writes them to the output as a CSV.
+func ToCSV(splitter Splitter) func(io.Reader, io.Writer) error {
+	return func(r io.Reader, w io.Writer) error {
+		csvWriter := csv.NewWriter(w)
+
+		scnr := bufio.NewScanner(r)
+		for scnr.Scan() {
+			line := scnr.Text()
+			if err := csvWriter.Write(splitter.Split(line, -1)); err != nil {
+				return err
+			}
+		}
+		if err := scnr.Err(); err != nil {
+			return err
+		}
+
+		csvWriter.Flush()
+		return nil
+	}
+}
 
 // CSVColumn is a filter function that reads the source as a CSV file and extracts the cell
 // values of the named column, excluding the header itself. If the column cannot be found,

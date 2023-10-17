@@ -1,6 +1,7 @@
 package scriptx_test
 
 import (
+	"regexp"
 	"testing"
 
 	"github.com/bitfield/script"
@@ -41,4 +42,18 @@ func ExampleCSVColumn() {
 	// apple
 	// banana
 	// cherry
+}
+
+func ExampleToCSV() {
+	script.Slice([]string{
+		"letter  fruit   word",
+		"a       apple   alpha",
+		"b       banana  bravo",
+		"c       cherry  charlie",
+	}).Filter(scriptx.ToCSV(regexp.MustCompile(`\s+`))).Stdout()
+	// Output:
+	// letter,fruit,word
+	// a,apple,alpha
+	// b,banana,bravo
+	// c,cherry,charlie
 }
